@@ -10,8 +10,8 @@
     "docs:preview": "vitepress preview",
     "seo:push": "node scripts/baidu-push.mjs",
     "seo:list": "node scripts/baidu-url-list.mjs",
-    "upload": "node scripts/upload.js",
-    "deploy": "pnpm docs:build && pnpm upload ./dist"
+    "upload": "node --env-file-if-exists=.env.local scripts/upload.js",
+    "publish": "pnpm docs:build && pnpm upload ./dist"
   },
   "devDependencies": {
     "vitepress": "^1.6.3",
