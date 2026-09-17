@@ -75,7 +75,125 @@ ANTHROPIC_API_KEY=sk-ant-xxx
 .env.*.local
 ```
 
-### Cursor / Claude Code 配置
+## 2. 配置文件：本地密钥的标准做法
+
+为了让 AI 看到配置结构、但**永远看不到真实密钥**，推荐采用 **"三件套"模式**：
+
+```
+.env.example     ← 模板（提交到 Git，AI 可读）
+.env             ← 真实密钥（本地私有，不提交）
+.env.local       ← 个人覆盖（可选，更私密）
+     +
+.gitignore       ← 拦截 .env
+.cursorignore    ← 拦截 AI 读取 .env
+```
+
+### .env.example（密钥模板）
+
+**目的**：给 AI（和团队成员）一个清晰的"配置清单"，**只放键名 + 占位符，绝不出现真实值**。
+
+```bash
+# .env.example（提交到 Git）
+
+# 腾讯云 COS 部署凭据
+COS_SECRET_ID=<your-secret-id>
+COS_SECRET_KEY=<your-secret-key>
+COS_BUCKET=<your-bucket-name>
+COS_REGION=ap-nanjing
+
+# AI 模型 API
+OPENAI_API_KEY=sk-<your-openai-key>
+ANTHROPIC_API_KEY=sk-ant-<your-anthropic-key>
+
+# 数据库
+DATABASE_URL=postgresql://<user>:<pass>@<host>:<port>/<db>
+```
+
+**为什么重要**：
+
+- AI 能理解项目依赖哪些配置项，写代码时正确引用 `process.env.X`
+- 新人 clone 项目后 `cp .env.example .env` 即可上手
+- 真实密钥永远不会被 commit，永远不会被 AI 读到
+
+### .env（真实密钥，本地私有）
+
+**目的**：存放真实密钥，**只在本地生效，绝不入库**。
+
+```bash
+# .env（已在 .gitignore 中，不入库）
+
+COS_SECRET_ID=AKIDxxxxxxxxxx
+COS_SECRET_KEY=xxxxxxxxxxxxxx
+COS_BUCKET=guide-1300453555
+COS_REGION=ap-nanjing
+```
+
+**写法规范**：
+
+| 项目 | 规范 |
+|------|------|
+| 命名 | 全大写 + 下划线，如 `COS_SECRET_ID` |
+| 注释 | 必要时用 `#` 注释分组（注释也会入库到 .env.example） |
+| 换行 | 每行一个变量，结尾不要有多余空格 |
+| 引用 | 代码中用 `process.env.COS_SECRET_ID` 读取 |
+
+**禁止做法**：
+
+```javascript
+// ❌ 硬编码在源码
+const SECRET = "AKIDxxxxx"
+
+// ❌ 硬编码 + 注释里写"真密钥"
+const SECRET = "AKIDxxxxx"  // 这是真实的，别删
+
+// ❌ 提交到 Git 的 .env
+// .gitignore 里没写 .env → 立刻泄露
+```
+
+### .gitignore（关键防线）
+
+```gitignore
+# .gitignore
+
+# 环境变量：本地私有，绝不入库
+.env
+.env.local
+.env.*.local
+
+# 兜底：任何以 .env 开头的本地配置
+.env*
+!.env.example     # ← 例外：保留 .env.example 入库
+
+# IDE / 系统
+.DS_Store
+*.swp
+
+# 构建产物
+node_modules
+dist
+```
+
+**关键点**：**`!.env.example` 这一行必须加**——它告诉 Git "所有 .env 都忽略，但 .env.example 例外"。
+
+### 验证 .env 没被误提交
+
+```bash
+# 方法 1：检查 git 是否跟踪
+git ls-files | grep .env
+# 期望：只显示 .env.example，不显示 .env
+
+# 方法 2：用 check-ignore 验证
+git check-ignore -v .env
+# 期望输出：.gitignore:6:.env   .env
+
+# 方法 3：查看待提交文件
+git status
+# 期望：.env 不出现在待提交列表
+```
+
+### 在 Cursor / Claude Code 中排除
+
+`.gitignore` 只防 Git 提交，但 **AI 工具可能直接读取文件内容**（比如 `@.env`）。需要额外屏蔽：
 ```bash
 
 # Cursor 中排除敏感文件
