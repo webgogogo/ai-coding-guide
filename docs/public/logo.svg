@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#5472ff" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#5472ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="iconGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#dbe4ff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景：呼吸光晕 -->
+  <rect width="128" height="128" rx="24" fill="#3451b2"/>
+
+  <!-- 中心光晕脉动 -->
+  <circle cx="64" cy="64" r="56" fill="url(#bgGlow)">
+    <animate attributeName="r" values="44;58;44" dur="3s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.5;0.9;0.5" dur="3s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- AI 编码图标主体：缓慢摆动 + 描边脉冲 -->
+  <g transform="translate(32 32)">
+    <g>
+      <animateTransform
+        attributeName="transform"
+        type="rotate"
+        values="0 12 12; 4 12 12; 0 12 12; -4 12 12; 0 12 12"
+        keyTimes="0;0.25;0.5;0.75;1"
+        dur="4s"
+        repeatCount="indefinite"/>
+
+      <!-- 放大 2.67 倍以填满 64x64 -->
+      <g transform="scale(2.67)">
+        <path
+          fill="none"
+          stroke="url(#iconGrad)"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="m7 8l-4 4l4 4m10-8l3.111 3.111M14 4l-2.175 8.7M14 21v-4a2 2 0 1 1 4 0v4m-4-2h4m3-4v6">
+          <!-- 描边脉冲：实现"书写"效果 -->
+          <animate
+            attributeName="stroke-width"
+            values="1.6;2.4;1.6"
+            dur="1.6s"
+            repeatCount="indefinite"/>
+          <animate
+            attributeName="opacity"
+            values="0.85;1;0.85"
+            dur="1.6s"
+            repeatCount="indefinite"/>
+        </path>
+      </g>
+    </g>
+  </g>
+
+  <!-- 角落粒子：AI 思考中的闪烁 -->
+  <g fill="#ffffff">
+    <circle cx="20" cy="22" r="1.8">
+      <animate attributeName="opacity" values="0;1;0" dur="1.8s" begin="0s" repeatCount="indefinite"/>
+      <animate attributeName="r" values="1.2;2.4;1.2" dur="1.8s" begin="0s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="106" cy="24" r="1.8">
+      <animate attributeName="opacity" values="0;1;0" dur="1.8s" begin="0.4s" repeatCount="indefinite"/>
+      <animate attributeName="r" values="1.2;2.4;1.2" dur="1.8s" begin="0.4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="108" cy="104" r="1.8">
+      <animate attributeName="opacity" values="0;1;0" dur="1.8s" begin="0.9s" repeatCount="indefinite"/>
+      <animate attributeName="r" values="1.2;2.4;1.2" dur="1.8s" begin="0.9s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="22" cy="106" r="1.8">
+      <animate attributeName="opacity" values="0;1;0" dur="1.8s" begin="1.3s" repeatCount="indefinite"/>
+      <animate attributeName="r" values="1.2;2.4;1.2" dur="1.8s" begin="1.3s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- 终端光标：在代码区右侧闪烁 -->
+  <rect x="96" y="54" width="3" height="20" rx="1" fill="#ffffff">
+    <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- 扫描线：自上而下的"数据流"效果 -->
+  <rect x="0" y="0" width="128" height="2" fill="#ffffff" opacity="0">
+    <animate attributeName="y" values="-2;128" dur="2.5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0;0.4;0" dur="2.5s" repeatCount="indefinite"/>
+  </rect>
+</svg>

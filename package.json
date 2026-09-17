@@ -1,0 +1,25 @@
+{
+  "name": "ai-coding-guide",
+  "version": "1.0.0",
+  "description": "AI Coding 实践指南 - 中小团队最佳实践",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "docs:dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview",
+    "seo:push": "node scripts/baidu-push.mjs",
+    "seo:list": "node scripts/baidu-url-list.mjs",
+    "upload": "node scripts/upload.js",
+    "deploy": "pnpm docs:build && pnpm upload ./dist"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.3",
+    "vue": "^3.5.13"
+  },
+  "dependencies": {
+    "@iconify-json/tabler": "^1.2.38",
+    "@iconify/vue": "^5.0.1",
+    "cos-nodejs-sdk-v5": "^3.0.0"
+  }
+}

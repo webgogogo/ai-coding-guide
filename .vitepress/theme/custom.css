@@ -1,0 +1,413 @@
+/**
+ * 自定义样式：让 MouseGlow 画布位于背景层（z-index: 0），
+ * 但所有内容（导航、正文、侧栏）都浮在画布之上。
+ *
+ * 鼠标跟随画布已通过 .mouse-glow-canvas (z-index: 0) 定位。
+ * 这里只需确保内容区域背景透明，粒子即可透出来。
+ */
+
+:root {
+  /* 适当降低页面背景透明度，让特效更明显 */
+  --vp-home-bg-color: transparent;
+}
+
+/* 内容区透明（让粒子从底层透出） */
+.VPContent,
+.VPDoc,
+.VPHome,
+.VPDoc .container,
+.VPDoc .content-container {
+  background: transparent;
+}
+
+/* Hero 区透明 */
+.VPHero .name,
+.VPHero .text,
+.VPHero .tagline {
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+  padding-top: 0 !important;
+}
+
+/* 暗色模式下让粒子更柔和 */
+.dark .VPHero .name,
+.dark .VPHero .text,
+.dark .VPHero .tagline {
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* 不打扰文字阅读 */
+.VPContent .VPDoc h1,
+.VPContent .VPDoc h2,
+.VPContent .VPDoc h3,
+.VPContent .VPDoc h4,
+.VPContent .VPDoc p,
+.VPContent .VPDoc li,
+.VPContent .VPDoc td,
+.VPContent .VPDoc code,
+.VPContent .VPDoc pre {
+  position: relative;
+  z-index: 1;
+}
+
+/* 卡片 / 表格元素轻微透明 + 模糊，让背景粒子可透出 */
+.card,
+.VPCard,
+.vp-doc table,
+.vp-doc blockquote,
+.vp-doc details {
+  position: relative;
+  z-index: 1;
+}
+
+/* 用户偏好减弱动效时，隐藏特效 */
+@media (prefers-reduced-motion: reduce) {
+  .mouse-glow-canvas {
+    display: none;
+  }
+}
+
+/* 移动端降低特效密度（组件内已自动减半），保留视觉但不抢戏 */
+@media (max-width: 768px) {
+  .mouse-glow-canvas {
+    opacity: 0.5;
+  }
+}
+
+/* ========================================================================
+   首页：核心主题速览（图标卡片网格）
+   使用全局选择器，避免 <style scoped> 作用域失效
+   ======================================================================== */
+
+/* Hero 副标题：缩小字号并默认不换行（避免"工程化实践"折行） */
+.VPHero .text {
+  font-size: 2.4em !important;
+}
+
+@media (max-width: 640px) {
+  .VPHero .text {
+    font-size: 1.2em !important;
+  }
+}
+
+.vp-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin: 32px 0 40px;
+}
+
+.vp-icon-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 28px 26px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  background: var(--vp-c-bg-soft);
+  /* 弹簧缓动：制造轻微回弹的"被吸起"感 */
+  transition:
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.35s ease,
+    border-color 0.35s ease,
+    background 0.35s ease;
+  overflow: hidden;
+  cursor: pointer;
+  /* 重置 <a> 默认样式 */
+  text-decoration: none !important;
+  color: inherit;
+}
+
+.vp-icon-card:hover,
+.vp-icon-card:focus {
+  text-decoration: none !important;
+  color: inherit;
+}
+
+.vp-icon-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--vp-c-brand-1);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.25s ease;
+}
+
+.vp-icon-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow:
+    0 16px 40px rgba(52, 81, 178, 0.18),
+    0 4px 12px rgba(0, 0, 0, 0.06);
+  border-color: var(--vp-c-brand-1);
+  background: var(--vp-c-bg);
+}
+
+.vp-icon-card:hover::before {
+  transform: scaleY(1);
+}
+
+/* 标题：覆盖 VitePress 默认 h3 样式 */
+.vp-icon-card h3 {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 1.15em !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em;
+  border: none !important;
+  transition: color 0.35s ease;
+}
+
+.vp-icon-card:hover h3 {
+  color: var(--vp-c-brand-1);
+}
+
+.vp-icon-card p {
+  margin: 0;
+  color: var(--vp-c-text-2);
+  font-size: 0.92em;
+  line-height: 1.65;
+  transition: color 0.35s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.vp-icon-card:hover p {
+  color: var(--vp-c-text-1);
+  transform: translateX(2px);
+}
+
+.vp-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: var(--vp-c-brand-soft);
+  transition:
+    background 0.35s ease,
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.35s ease;
+}
+
+.vp-icon-wrap svg {
+  flex-shrink: 0;
+  color: var(--vp-c-brand-1);
+  transition:
+    color 0.35s ease,
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.vp-icon-card:hover .vp-icon-wrap {
+  background: var(--vp-c-brand-1);
+  transform: scale(1.1) rotate(-6deg);
+  box-shadow: 0 6px 16px rgba(52, 81, 178, 0.35);
+}
+
+.vp-icon-card:hover .vp-icon-wrap svg {
+  color: var(--vp-c-white);
+  transform: scale(1.08);
+}
+
+/* 文档统计区块 */
+.vp-doc-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 20px 0 28px;
+  padding: 18px 20px;
+  background: var(--vp-c-bg-soft);
+  border-radius: 12px;
+  border: 1px solid var(--vp-c-divider);
+}
+
+.vp-doc-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 0;
+  text-align: center;
+  transition: transform 0.25s ease;
+}
+
+.vp-doc-stat:hover {
+  transform: translateY(-2px);
+}
+
+.vp-doc-stat svg {
+  color: var(--vp-c-brand-1);
+  margin-bottom: 2px;
+}
+
+.vp-doc-stat strong {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+  letter-spacing: 0.01em;
+}
+
+.vp-doc-stat span {
+  font-size: 0.85em;
+  color: var(--vp-c-text-2);
+}
+
+@media (max-width: 640px) {
+  .vp-doc-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 14px 12px;
+  }
+  .vp-doc-stat strong {
+    font-size: 1em;
+  }
+}
+
+/* 读者对象：2 列布局（复用 icon-card 样式） */
+.vp-icon-grid:has(> .vp-audience-card:nth-last-child(2)) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 720px;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.vp-audience-card h3 {
+  font-size: 1.1em !important;
+}
+
+.vp-audience-card p {
+  font-size: 0.9em;
+}
+
+@media (max-width: 640px) {
+  .vp-icon-grid:has(> .vp-audience-card:nth-last-child(2)) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 减少动效偏好：尊重用户系统设置 */
+@media (prefers-reduced-motion: reduce) {
+  .vp-icon-card,
+  .vp-icon-wrap,
+  .vp-icon-wrap svg,
+  .vp-icon-card h3,
+  .vp-icon-card p,
+  .vp-doc-stat {
+    transition: none !important;
+  }
+  .vp-icon-card:hover {
+    transform: translateY(-4px);
+  }
+}
+
+@media (max-width: 640px) {
+  .vp-icon-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .vp-icon-card {
+    padding: 22px;
+  }
+}
+
+/* ========================================================================
+   页脚：邮箱链接样式（覆盖 VPFooter 默认下划线）
+   ======================================================================== */
+.VPFooter .vp-footer-mail {
+  color: var(--vp-c-brand-1);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.VPFooter .vp-footer-mail:hover {
+  color: var(--vp-c-brand-2);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ========================================================================
+   联系我页：咖啡赞赏卡片
+   ======================================================================== */
+.coffee-card {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 28px 32px;
+  margin: 20px 0 28px;
+  background: linear-gradient(135deg, var(--vp-c-bg-soft) 0%, var(--vp-c-bg) 100%);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.coffee-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(52, 81, 178, 0.12);
+}
+
+.coffee-card__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.coffee-card__text h3 {
+  margin: 0 0 8px 0 !important;
+  padding: 0 !important;
+  font-size: 1.3em !important;
+  font-weight: 600 !important;
+  color: var(--vp-c-brand-1);
+  border: none !important;
+}
+
+.coffee-card__text p {
+  margin: 0;
+  color: var(--vp-c-text-2);
+  line-height: 1.7;
+  font-size: 0.95em;
+}
+
+.coffee-card__qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.coffee-card__qr img {
+  width: 180px;
+  height: 200px;
+  border-radius: 12px;
+  background: #fff;
+  padding: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+}
+
+.coffee-card__qr img:hover {
+  transform: scale(1.04);
+}
+
+.coffee-card__caption {
+  font-size: 0.85em;
+  color: var(--vp-c-text-2);
+  font-weight: 500;
+}
+
+@media (max-width: 640px) {
+  .coffee-card {
+    flex-direction: column-reverse;
+    text-align: center;
+    padding: 24px 20px;
+    gap: 20px;
+  }
+  .coffee-card__qr img {
+    width: 160px;
+    height: 160px;
+  }
+}
